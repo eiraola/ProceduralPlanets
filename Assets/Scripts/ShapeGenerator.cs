@@ -6,15 +6,39 @@ public class ShapeGenerator
 {
 
     ShapeSettings settings;
-    NoiseFilter noiseFilter;
+    NoiseFilter[] noiseFilters;
 
     public ShapeGenerator(ShapeSettings sett) {
         settings = sett;
-        noiseFilter = new NoiseFilter(settings.noiseSettings);
+        noiseFilters = new NoiseFilter[settings.noiseLayers.Length];
+        for (int i = 0; i < settings.noiseLayers.Length; i++)
+        {
+            noiseFilters[i] = new NoiseFilter(settings.noiseLayers[i].noiseSettings);
+        }
     }
 
     public Vector3 CalculatePointOnPlanet(Vector3 pointOnUnitSphere) {
-        float elevation = noiseFilter.Evaluate(pointOnUnitSphere);
+        float firstLayerValue = 0;
+
+        float elevation = 0;
+
+        if (noiseFilters.Length > 0)
+        { 
+            firstLayerValue = noiseFilters[0].Evaluate(pointOnUnitSphere);
+            if (settings.noiseLayers[0].enabled)
+            {
+                elevation = firstLayerValue;
+            }
+        }
+        for (int i = 1; i < noiseFilters.Length; i++)
+        {
+            if (settings.noiseLayers[i].enabled) {
+                float mask = 1;
+
+                if (settings.noiseLayers[i].useFirstLayerAsMask) { mask = firstLayerValue; }
+                 elevation += noiseFilters[i].Evaluate(pointOnUnitSphere)*mask;
+            }
+        }
         return pointOnUnitSphere * settings.planetRadius * (1+ elevation);
     }
 }
