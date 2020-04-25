@@ -6,13 +6,15 @@ public class ShapeGenerator
 {
 
     ShapeSettings settings;
+    NoiseFilter noiseFilter;
 
     public ShapeGenerator(ShapeSettings sett) {
         settings = sett;
+        noiseFilter = new NoiseFilter(settings.noiseSettings);
     }
 
     public Vector3 CalculatePointOnPlanet(Vector3 pointOnUnitSphere) {
-
-        return pointOnUnitSphere * settings.planetRadius;
+        float elevation = noiseFilter.Evaluate(pointOnUnitSphere);
+        return pointOnUnitSphere * settings.planetRadius * (1+ elevation);
     }
 }

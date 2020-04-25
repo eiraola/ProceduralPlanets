@@ -7,6 +7,7 @@ public class Planet : MonoBehaviour
     [Range(2,256)]
     public int resolution = 10;
 
+    bool autoUpdate = true;
     public ShapeSettings shapeSettings;
     public ColorSettings colorSettings;
 
@@ -60,15 +61,20 @@ public class Planet : MonoBehaviour
         GeneratMesh();
     }
     public void OnShapeSettingsUpdated() {
-        Initialize();
-        GeneratMesh();
+        if (autoUpdate)
+        {
+            Initialize();
+            GeneratMesh();
+        }
     }
 
     public void OnColorSettingsUpdated()
     {
-        Initialize();
-        GenerateColors();
-       
+        if (autoUpdate)
+        {
+            Initialize();
+            GenerateColors();
+        }
     }
     void GeneratMesh() {
         foreach (TerrainFace face in  terrainFaces)
