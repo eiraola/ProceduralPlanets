@@ -4,7 +4,9 @@ using UnityEngine;
 
 public class TerrainFace : MonoBehaviour
 {
+
     // Start is called before the first frame update
+    ShapeGenerator shapeGenerator;
     Mesh mesh;
     int resolution;
     Vector3 localUp;
@@ -14,8 +16,9 @@ public class TerrainFace : MonoBehaviour
     {
         
     }
-    public TerrainFace(Mesh mesh, int resolution, Vector3 localUp) 
+    public TerrainFace(ShapeGenerator shapeGenerator,Mesh mesh, int resolution, Vector3 localUp) 
     {
+        this.shapeGenerator = shapeGenerator;
         this.mesh = mesh;
         this.resolution = resolution;
         this.localUp = localUp;
@@ -37,8 +40,8 @@ public class TerrainFace : MonoBehaviour
                 int i = x + y * resolution;
                 Vector2 percent = new Vector2(x,y)/(resolution-1);
                 Vector3 pointOnCube=localUp + (percent.x -0.5f)*2*axisA + (percent.y-0.5f)*2 *axisB;
-                Vector3 pointSphere = pointOnCube.normalized; 
-                vertices[i] = pointSphere;
+                Vector3 pointSphere = pointOnCube.normalized;
+                vertices[i] = shapeGenerator.CalculatePointOnPlanet(pointSphere);
 
                 if ((x!=resolution-1) && (y!=resolution-1))
                 {
